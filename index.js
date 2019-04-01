@@ -67,6 +67,7 @@ function signingIn() {
             firebase.database().ref('users/' + usr.uid).once('value', function(snapshot) {
                 myUsername = snapshot.val().username;
             });
+
             localStorage.setItem("username", myUsername);
 
         }
