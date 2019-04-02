@@ -34,7 +34,7 @@ var connections = [];
 var numOfRooms = 0;
 var team = 0;
 var newplayer = false;
-const numofPlayers = 2;
+const numofPlayers = 4;
 
 http.listen(port, function() {
     console.log("Server started..." + "\nListening on port: " + port + "\n");
@@ -89,7 +89,7 @@ function updateUsers(socket) {
     if (numClients === numofPlayers) {
         io.to(newRoom).emit('start', newRoom);
 
-        //        console.log(team1Arr + "     " + team2Arr + "...");
+
         io.sockets.adapter.rooms[newRoom].start = true;
         io.sockets.adapter.rooms[newRoom].points1 = 0;
         io.sockets.adapter.rooms[newRoom].points2 = 0;
@@ -140,7 +140,7 @@ io.on('connection', function(socket) { // SOCKET.ID IS UNIQE TO EACH PERSON
     socket.on('chat message', function(msg) {
         io.sockets.adapter.rooms[currentRoom].isUpdated = false;
         io.to(currentRoom).emit('chat message', msg, socket.team, socket.id);
-        console.log(socket.username);
+
     });
 
 
@@ -184,11 +184,7 @@ io.on('connection', function(socket) { // SOCKET.ID IS UNIQE TO EACH PERSON
             var team2Arr = [];
 
             for (var socket1 in lobby) {
-
                 var player = io.sockets.connected[socket1];
-
-                console.log(player.team + " " + player.username);
-
 
                 if (player.team === 1)
                     team1Arr.push(player.username);
@@ -198,19 +194,38 @@ io.on('connection', function(socket) { // SOCKET.ID IS UNIQE TO EACH PERSON
             }
 
             io.to(room).emit('setTeam', team1Arr, team2Arr);
+
+
+            if (team1Arr === undefined || team1Arr.length === 0) {
+                // if (socket.team === 2)
+                console.log("ARRAY ONE IS EMPTY");
+                io.to(room).emit('endGameWin', io.sockets.adapter.rooms[currentRoom].points2, socket.points, io.sockets.adapter.rooms[currentRoom].points1);
+                io.to(room).emit('sentNewArray', []);
+
+            } else if (team2Arr === undefined || team2Arr.length === 0) {
+                // if (socket.team === 1)
+                console.log("ARRAY TWO IS EMPTY");
+                io.to(room).emit('endGameWin', io.sockets.adapter.rooms[currentRoom].points1, socket.points, io.sockets.adapter.rooms[currentRoom].points2);
+                io.to(room).emit('sentNewArray', []);
+            }
+
+            console.log("Team 1 Arr " + team1Arr + " Length: " + team1Arr.length);
+            console.log("Team 2 Arr " + team2Arr + " Length: " + team2Arr.length);
+
+
+
         }
+
+
+
     }
 
 
 
 
     socket.on('setUsername', function(name) {
-        // console.log(name);
         socket.username = name;
-
         updateUsernameString(currentRoom);
-
-        //   console.log(socket.username);
     });
 
     // Set username of Socket NOT USED

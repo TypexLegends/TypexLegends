@@ -145,6 +145,8 @@ app.controller("cont", function($scope) {
             endGame(teamPoints, playerPoints, teamPoints2);
             $('#win').html('VICTORY');
             addPoints(playerPoints);
+            console.log(teamPoints + " " + playerPoints + " " + teamPoints2);
+
         });
 
 
@@ -190,7 +192,7 @@ app.controller("cont", function($scope) {
         /* What to do when  not enough people are in room*/
         socket.on('not ready', function(numPeople) {
             $('#timer').html("Waiting for lobby to fill up...");
-            $('#numOfPlayers').html(numPeople + " / " + 2 + " Players");
+            $('#numOfPlayers').html(numPeople + " / " + 4 + " Players");
         });
     });
 });
